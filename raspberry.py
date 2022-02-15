@@ -99,7 +99,6 @@ class RaspPIManager(object):
         # if is not empty
         if size > 0:
             accessFile.write('\n\n')
-            accessFile.write('{} - '.format(data['id']))
 
         accessFile.write(data)
         accessFile.close()
