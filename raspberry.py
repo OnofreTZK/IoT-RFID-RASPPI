@@ -1,4 +1,5 @@
 from time import sleep
+from datetime import datetime
 import json
 import sys
 import RPi.GPIO as GPIO
@@ -12,6 +13,21 @@ class RaspPIManager(object):
         ''' Constructor '''
         self.listOfAccess = []
         self.isReading = False
+        self.githubUserToken = ''
+        self.filepathToToken = 'token.dat'
+        self.filepathAccessFile = 'repository/access_list.dat'
+
+    def setToken(self):
+        ''' Reading token from file '''
+        # Opening file
+        try:
+            token = open(self.filepathToToken, "r")
+        except IOError:
+            print('Por favor, verifique o arquivo com o token.')
+
+        self.githubUserToken = str(token.readline())
+        token.close()
+        print(self.githubUserToken)
 
     def writeTag(self, data):
         ''' Write function '''
@@ -28,16 +44,62 @@ class RaspPIManager(object):
     def readTag(self):
         ''' Read function '''
 
+        print("Aproxime a tag")
+        id, data = reader.read()
+        data['access_time'] = datetime.Now()
+        data['id'] = id
+        print(data)
+
+    def pushToRepo(self):
+        ''' Push data to repo '''
+
+        #gituser = Github(self.githubUserToken)
+        repo_dir = './'
+        repo = Repo(repo_dir)#gituser.get_user().get_repo("IoT-RFID-RASPPI")
+        fileList = [
+            self.filepathAccessFile
+        ]
+        commitMessage = 'Updating access list in the repository'
+        repo.index.add(fileList)
+        repo.index.commit(commitMessage)
+        origin = repo.remote('origin')
+        origin.push()
+
+
+    def pushToRepo(self):
+        ''' Push data to repo '''
+
+        #gituser = Github(self.githubUserToken)
+        repo_dir = './'
+        repo = Repo(repo_dir)#gituser.get_user().get_repo("IoT-RFID-RASPPI")
+        fileList = [
+            self.filepathAccessFile
+        ]
+        commitMessage = 'Updating access list in the repository'
+        repo.index.add(fileList)
+        repo.index.commit(commitMessage)
+        origin = repo.remote('origin')
+        origin.push()
+
+    def writeAccessData(self, data):
+        ''' Write read data to file '''
+
+        # Opening file
         try:
-            while True:
-                print("Aproxime a tag")
-                id, data = reader.read()
-                print(data)
-                # send data to repo
-                sleep(5)
-        except KeyboardInterrupt:
-            GPIO.cleanup()
-            raise
+            accessFile = open(self.filepathAccessFile, "a+")
+        except IOError:
+            print('Por favor, verifique o arquivo para depositar os acessos.')
+
+        accessFile.seek(0)
+        data_file = accessFile.read(1000)
+        size = len(data_file)
+        # if is not empty
+        if size > 0:
+            accessFile.write('\n\n')
+            accessFile.write('{} - '.format(data['id']))
+
+        accessFile.write(data)
+        accessFile.close()
 
     def argsService(self, args):
         ''' Arguments processing '''
@@ -54,15 +116,28 @@ w -> escrita''')
 
     def exec(self, args):
         ''' Main method '''
-
         self.argsService(args)
 
         if self.isReading:
             print("reading method")
+            data = self.readTag()
+            self.writeAccessData(data)
+            self.pushToRepo()
             sys.exit(0)
         #else
 
         print("writing method")
+        tiago = {
+            'id' : '',
+            'nome' : 'Tiago Onofre',
+        }
+
+        amanda = {
+            'id' : '',
+            'nome' : 'Amanda Albuquerque',
+        }
+        self.writeTag(tiago)
+        self.writeTag(amanda)
         sys.exit(0)
 
 

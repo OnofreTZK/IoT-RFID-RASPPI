@@ -11,8 +11,8 @@ class RaspPIManager(object):
         self.listOfAccess = []
         self.isReading = False
         self.githubUserToken = ''
-        self.filepathToToken = './token.dat'
-        self.filepathAccessFile = './repository/access_list.dat'
+        self.filepathToToken = 'token.dat'
+        self.filepathAccessFile = 'repository/access_list.dat'
 
     def setToken(self):
         ''' Reading token from file '''
