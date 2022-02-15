@@ -46,7 +46,7 @@ class RaspPIManager(object):
             print("Aproxime a tag")
             id, data = reader.read()
             obj = json.loads(data)
-            obj['access_time'] = datetime.now()
+            obj['access_time'] = datetime.now().strftime('%d/%m/%Y, %H:%M:%S')
             obj['id'] = id
             print(data)
             GPIO.cleanup()
