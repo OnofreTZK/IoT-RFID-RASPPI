@@ -37,18 +37,20 @@ class RaspPIManager(object):
             print("Aproxime a tag")
             reader.write(json.dumps(data))
             print('Tag preenchida!')
-            sleep(5)
             GPIO.cleanup()
             break
 
     def readTag(self):
         ''' Read function '''
-
-        print("Aproxime a tag")
-        id, data = reader.read()
-        data['access_time'] = datetime.Now()
-        data['id'] = id
-        print(data)
+        while True:
+            print("Aproxime a tag")
+            id, data = reader.read()
+            obj = json.loads(data)
+            obj['access_time'] = datetime.now()
+            obj['id'] = id
+            print(data)
+            GPIO.cleanup()
+            return obj
 
     def pushToRepo(self):
         ''' Push data to repo '''
