@@ -123,7 +123,7 @@ w -> escrita''')
         if self.isReading:
             print("reading method")
             data = self.readTag()
-            self.writeAccessData(data)
+            self.writeAccessData(json.dumps(data))
             self.pushToRepo()
             sys.exit(0)
         #else
@@ -138,7 +138,7 @@ w -> escrita''')
             'id' : '',
             'nome' : 'Amanda Albuquerque',
         }
-        self.writeTag(tiago)
+        #self.writeTag(tiago)
         self.writeTag(amanda)
         sys.exit(0)
 
