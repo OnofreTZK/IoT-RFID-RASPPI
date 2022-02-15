@@ -1,5 +1,6 @@
 from time import sleep
 from datetime import datetime
+from git import Repo
 import json
 import sys
 import RPi.GPIO as GPIO
